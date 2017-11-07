@@ -4,6 +4,7 @@ import fuji.antibot.antibot.Captcha;
 import fuji.antibot.antibot.CaptchaTimer;
 import fuji.antibot.commands.VerifyCommand;
 import fuji.antibot.main.AntiBot;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -13,12 +14,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -32,6 +35,9 @@ public class Events implements Listener {
     private HashMap<UUID, Integer> chestCount = new HashMap<>();
     private HashMap<UUID, Integer> signCount = new HashMap<>();
     private HashMap<UUID, Integer> teleportCount = new HashMap<>();
+
+    private HashMap<UUID, Long> oldMessage = new HashMap<>();
+    private HashMap<UUID, Long> newMessage = new HashMap<>();
 
     @EventHandler
     public void onChestOpen(InventoryOpenEvent e) {
@@ -49,13 +55,7 @@ public class Events implements Listener {
                         chestCount.put(player.getUniqueId(), i);
                         if (i >= AntiBot.getAntiBotSettingsFiles().get().getInt("Triggers.chest-access.count")) {
                             chestCount.remove(player.getUniqueId());
-
-                            BukkitTask task = new CaptchaTimer(JavaPlugin.getPlugin(AntiBot.class), AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"), player)
-                                    .runTaskTimer(JavaPlugin.getPlugin(AntiBot.class), 0L, 20L);
-                            Captcha captcha = new Captcha("chest-access", player, task, AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
-                            captcha.printMessage();
-                            VerifyCommand.addTask(player.getUniqueId(), task);
-                            VerifyCommand.addID(player.getUniqueId(), captcha.getId());
+                            createCaptcha(player, "chest-access", AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
                         }
                     }
                 }
@@ -83,12 +83,7 @@ public class Events implements Listener {
                                     signCount.put(player.getUniqueId(), i);
                                     if (i >= AntiBot.getAntiBotSettingsFiles().get().getInt("Triggers.sign-interact.count")) {
                                         signCount.remove(player.getUniqueId());
-                                        BukkitTask task = new CaptchaTimer(JavaPlugin.getPlugin(AntiBot.class), AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"), player)
-                                                .runTaskTimer(JavaPlugin.getPlugin(AntiBot.class), 0L, 20L);
-                                        Captcha captcha = new Captcha("sign-interact", player, task, AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
-                                        captcha.printMessage();
-                                        VerifyCommand.addTask(player.getUniqueId(), task);
-                                        VerifyCommand.addID(player.getUniqueId(), captcha.getId());
+                                        createCaptcha(player, "sign-interact", AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
                                     }
                                 }
                             }
@@ -113,18 +108,57 @@ public class Events implements Listener {
                     teleportCount.put(player.getUniqueId(), i);
                     if (i >= AntiBot.getAntiBotSettingsFiles().get().getInt("Triggers.teleport.count")) {
                         teleportCount.remove(player.getUniqueId());
-                        BukkitTask task = new CaptchaTimer(JavaPlugin.getPlugin(AntiBot.class), AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"), player)
-                                .runTaskTimer(JavaPlugin.getPlugin(AntiBot.class), 0L, 20L);
-                        Captcha captcha = new Captcha("teleport", player, task, AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
-                        captcha.printMessage();
-                        VerifyCommand.addTask(player.getUniqueId(), task);
-                        VerifyCommand.addID(player.getUniqueId(), captcha.getId());
+                        createCaptcha(player, "teleport", AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
                     }
                 }
             }
         }
     }
 
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        final Player player = e.getPlayer();
+        if (AntiBot.getAntiBotSettingsFiles().get().getBoolean("Triggers.chat.enabled")) {
+            if (!VerifyCommand.hasTask(player.getUniqueId())) {
+                if (oldMessage != null && newMessage != null) {
+                    Calendar firstMessage;
+                    Calendar secondMessage;
+
+                    if (!newMessage.containsKey(player.getUniqueId())) {
+                        firstMessage = Calendar.getInstance();
+                        newMessage.put(player.getUniqueId(), firstMessage.getTimeInMillis());
+                    } else {
+                        if (newMessage.containsKey(player.getUniqueId())) {
+                            oldMessage.put(player.getUniqueId(), newMessage.get(player.getUniqueId()));
+
+                            secondMessage = Calendar.getInstance();
+                            newMessage.put(player.getUniqueId(), secondMessage.getTimeInMillis());
+                        }
+                    }
+                    if (oldMessage.containsKey(player.getUniqueId())) {
+                        if (newMessage.containsKey(player.getUniqueId())) {
+                            long time = newMessage.get(player.getUniqueId()) - oldMessage.get(player.getUniqueId());
+                            if (AntiBot.getAntiBotSettingsFiles().get().get("Triggers.chat.minMessageDelay") != null) {
+                                if (time / 1000.00 < AntiBot.getAntiBotSettingsFiles().get().getDouble("Triggers.chat.minMessageDelay")) {
+                                    createCaptcha(player, "chat-spam", AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
+                                }
+                            }
+                            Bukkit.broadcastMessage(time / 1000.00 + " >? " + AntiBot.getAntiBotSettingsFiles().get().getDouble("Triggers.chat.minMessageDelay"));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void createCaptcha(Player player, String triggername, int time) {
+        BukkitTask task = new CaptchaTimer(JavaPlugin.getPlugin(AntiBot.class), time, player)
+                .runTaskTimer(JavaPlugin.getPlugin(AntiBot.class), 0L, 20L);
+        Captcha captcha = new Captcha(triggername, player, task, time);
+        captcha.printMessage();
+        VerifyCommand.addTask(player.getUniqueId(), task);
+        VerifyCommand.addID(player.getUniqueId(), captcha.getId());
+    }
 
 
 }

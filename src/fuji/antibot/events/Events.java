@@ -4,7 +4,6 @@ import fuji.antibot.antibot.Captcha;
 import fuji.antibot.antibot.CaptchaTimer;
 import fuji.antibot.commands.VerifyCommand;
 import fuji.antibot.main.AntiBot;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -143,7 +142,6 @@ public class Events implements Listener {
                                     createCaptcha(player, "chat-spam", AntiBot.getAntiBotSettingsFiles().get().getInt("Captcha.time"));
                                 }
                             }
-                            Bukkit.broadcastMessage(time / 1000.00 + " >? " + AntiBot.getAntiBotSettingsFiles().get().getDouble("Triggers.chat.minMessageDelay"));
                         }
                     }
                 }

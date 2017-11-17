@@ -92,6 +92,8 @@ public class AntiBot extends JavaPlugin {
                 antiBotSettingsFiles.get().set("Triggers.sign-interact.enabled", true);
                 antiBotSettingsFiles.get().set("Triggers.teleport.count", 5);
                 antiBotSettingsFiles.get().set("Triggers.teleport.enabled", true);
+                antiBotSettingsFiles.get().set("Triggers.chat.enabled", true);
+                antiBotSettingsFiles.get().set("Triggers.chat.minMessageDelay", 0.5);
                 antiBotSettingsFiles.get().set("AdminLog.permission", "antibot.adminlog");
                 antiBotSettingsFiles.get().set("AntiBot.permission", "antibot.admin");
                 antiBotSettingsFiles.save();

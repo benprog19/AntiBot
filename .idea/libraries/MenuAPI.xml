@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="MenuAPI">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../Spigot_Server/plugins/MenuAPI.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

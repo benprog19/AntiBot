@@ -26,6 +26,7 @@ public class AntiBotCommand implements CommandExecutor {
                     player.sendMessage(" ");
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "  Anti - Bot");
                     player.sendMessage(ChatColor.GRAY + "   /ab reload - Reload config.");
+                    player.sendMessage(ChatColor.GRAY + "   /ab adminlog - Activates admin mode.");
                     player.sendMessage(ChatColor.GRAY + "   More coming soon... Suggest a command at the spigot download site.");
                     player.sendMessage(" ");
                     player.sendMessage(border);
@@ -35,6 +36,7 @@ public class AntiBotCommand implements CommandExecutor {
                         AntiBot.getAntiBotSettingsFiles().load();
                         AntiBot.getAntiBotLangFiles().save();
                         AntiBot.getAntiBotSettingsFiles().save();
+                        AntiBot.getTimer().restart();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', AntiBot.getAntiBotLangFiles().get().getString("AntiBot.prefix") + AntiBot.getAntiBotLangFiles().get().getString("AntiBot.configReloaded")));
                     } else if (args[0].equalsIgnoreCase("adminlog")) {
                         if (player.hasPermission(AntiBot.getAntiBotSettingsFiles().get().getString("AdminLog.permission"))) {

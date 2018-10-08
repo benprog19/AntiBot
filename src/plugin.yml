@@ -1,5 +1,5 @@
 name: AntiBot
-version: 1.3
+version: 1.5
 author: zFuji
 main: fuji.antibot.main.AntiBot
 commands:

@@ -68,7 +68,8 @@ public class Events implements Listener {
         if (AntiBot.getAntiBotSettingsFiles().get().getBoolean("Triggers.sign-interact.enabled")) {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK) {
                 if (e.getClickedBlock().getType() != null) {
-                    if (e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)) {
+                    // TODO Fix Materials for signs (accounting for all signs)
+                    if (e.getClickedBlock().getType().equals(Material.Sign) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
                         String[] lines = {sign.getLine(0), sign.getLine(1), sign.getLine(2), sign.getLine(3)};
                         if (lines[0].contains("[Buy]") || lines[0].contains("[Sell]") || lines[0].contains("§1[Buy]") || lines[0].equals("§1[Sell]")) {

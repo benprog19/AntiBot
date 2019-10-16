@@ -9,7 +9,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import static sun.audio.AudioPlayer.player; // TODO Check what import this is
 
 /**
  * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -28,8 +27,6 @@ public class CheckTimer {
 
         if (count <= 0) {
             throw new IndexOutOfBoundsException("Timer cannot be 0 or less.");
-        } else if (player == null) {
-            throw new NullPointerException("Player equals null.");
         } else {
             this.count = count;
         }

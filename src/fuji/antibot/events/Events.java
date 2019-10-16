@@ -68,8 +68,18 @@ public class Events implements Listener {
         if (AntiBot.getAntiBotSettingsFiles().get().getBoolean("Triggers.sign-interact.enabled")) {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK) {
                 if (e.getClickedBlock().getType() != null) {
-                    // TODO Fix Materials for signs (accounting for all signs)
-                    if (e.getClickedBlock().getType().equals(Material.Sign) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)) {
+                    if (e.getClickedBlock().getType().equals(Material.ACACIA_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.ACACIA_WALL_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.BIRCH_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.BIRCH_WALL_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.DARK_OAK_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.DARK_OAK_WALL_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.JUNGLE_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.JUNGLE_WALL_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.OAK_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.OAK_WALL_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.SPRUCE_SIGN) ||
+                            e.getClickedBlock().getType().equals(Material.SPRUCE_WALL_SIGN)) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
                         String[] lines = {sign.getLine(0), sign.getLine(1), sign.getLine(2), sign.getLine(3)};
                         if (lines[0].contains("[Buy]") || lines[0].contains("[Sell]") || lines[0].contains("§1[Buy]") || lines[0].equals("§1[Sell]")) {
